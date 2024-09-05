@@ -61,7 +61,7 @@ public class HealthConnectService {
 	 * @since 1.0.0
 	 */
 	public void interlockHealthConnect(HealthConnectRegisterRequest request, String oauthId) {
-		User user = userSearchService.findJoinUserPoint(oauthId);
+		User user = userSearchService.findUserByOauthId(oauthId);
 		if (request.healthConnectInterlock()) {
 			if (user.isNeverConnectedHealthConnect()) {
 				pointService.addHealthConnectPoint(user);

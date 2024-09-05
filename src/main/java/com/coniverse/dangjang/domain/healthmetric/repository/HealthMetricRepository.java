@@ -89,4 +89,17 @@ public interface HealthMetricRepository extends JpaRepository<HealthMetric, Heal
 	 */
 	@Query("SELECT count(h) FROM HealthMetric h WHERE h.healthMetricId.oauthId = ?1 AND h.groupCode = ?2 AND h.healthMetricId.createdAt = ?3")
 	int findHealthMetricCountByGroupCode(String oauthId, GroupCode groupCode, LocalDate createdAt);
+
+	/**
+	 * 기간 내 사용자의 모든 건강지표 조회
+	 *
+	 * @param oauthId   사용자 ID
+	 * @param startDate 시작일
+	 * @param endDate   종료일
+	 * @return HealthMetric
+	 * @since 1.0.0
+	 */
+	@Query("SELECT h FROM HealthMetric h WHERE h.healthMetricId.oauthId = ?1 AND h.healthMetricId.createdAt between ?2 and ?3")
+	List<HealthMetric> findAllHealthMetricByDate(String oauthId, LocalDate startDate, LocalDate endDate);
+
 }

@@ -2,15 +2,20 @@ package com.coniverse.dangjang.domain.point.entity;
 
 import org.springframework.data.domain.Persistable;
 
+import com.coniverse.dangjang.domain.point.dto.response.UserPointResponse;
 import com.coniverse.dangjang.domain.user.entity.User;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.ColumnResult;
+import jakarta.persistence.ConstructorResult;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
+import jakarta.persistence.NamedNativeQuery;
+import jakarta.persistence.SqlResultSetMapping;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,6 +28,30 @@ import lombok.NoArgsConstructor;
  * @since 1.0.0
  */
 @Entity
+@NamedNativeQuery(
+	name = "findAllUserPoint",
+	query =
+		" select u.oauth_id as oauthId , COALESCE(p.totalPoint, 0) as totalPoint "
+			+ "from  Users  u USE INDEX (PRIMARY)  "
+			+ "left join ( "
+			+ "    select oauth_id, SUM(change_point) as totalPoint  "
+			+ "    from POINT_HISTORY "
+			+ "    group by oauth_id "
+			+ ") p on u.oauth_id = p.oauth_id "
+			+ " LIMIT :limit OFFSET :offset",
+	resultSetMapping = "mapToUserPointResponse"
+)
+@SqlResultSetMapping(
+	name = "mapToUserPointResponse",
+	classes = @ConstructorResult(
+		targetClass = UserPointResponse.class,
+		columns = {
+			@ColumnResult(name = "oauthId", type = String.class),
+			@ColumnResult(name = "totalPoint", type = Integer.class)
+		}
+	)
+)
+
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class PointHistory implements Persistable<PointId> {
@@ -31,8 +60,6 @@ public class PointHistory implements Persistable<PointId> {
 	private PointId pointId;
 	@Column(nullable = false)
 	private int changePoint;
-	@Column(nullable = false)
-	private int balancePoint;
 	@MapsId("oauthId")
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "oauth_id", insertable = false, updatable = false)
@@ -43,10 +70,9 @@ public class PointHistory implements Persistable<PointId> {
 	private PointProduct pointProduct;
 
 	@Builder
-	private PointHistory(User user, int changePoint, int balancePoint, PointProduct pointProduct) {
+	private PointHistory(User user, int changePoint, PointProduct pointProduct) {
 		this.pointId = new PointId();
 		this.changePoint = changePoint;
-		this.balancePoint = balancePoint;
 		this.user = user;
 		this.pointProduct = pointProduct;
 	}

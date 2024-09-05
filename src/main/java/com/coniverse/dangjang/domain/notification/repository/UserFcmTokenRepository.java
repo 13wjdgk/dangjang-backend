@@ -25,7 +25,9 @@ public interface UserFcmTokenRepository extends JpaRepository<UserFcmToken, FcmI
 	 * @param compareDate 비교 날짜
 	 * @since 1.1.0
 	 */
-	@Query(value = "SELECT utk FROM UserFcmToken utk WHERE FUNCTION('TIMESTAMPDIFF', DAY,  utk.user.accessedAt , :compareDate ) IN (1, 3, 7, 14, 30)")
+	//TODO : 유저 접속 기록 수정
+	//@Query(value = "SELECT utk FROM UserFcmToken utk WHERE FUNCTION('TIMESTAMPDIFF', DAY,  utk.user.accessedAt , :compareDate ) IN (1, 3, 7, 14, 30)")
+	@Query(value = "SELECT utk FROM UserFcmToken utk")
 	List<UserFcmToken> findNotAccessUserFcmToken(@Param("compareDate") LocalDate compareDate);
 
 	/**

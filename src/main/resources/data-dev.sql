@@ -1,19 +1,22 @@
 INSERT INTO users (oauth_id, oauth_provider, nickname, gender, birthday, activity_amount, height, recommended_calorie, status, role, profile_image_path,
-                   diabetic, diabetes_year, medicine, injection, created_at, updated_at, accessed_at, health_connect)
-VALUES ('11111111', 'KAKAO', 'TEO', 'M', '1997-05-23', 'MEDIUM', 180, 2000, 'ACTIVE', 'ADMIN', 'user/image/teo', false, 0, false, false, now(), now(),
-        now(), 'NEVER_CONNECTED');
+                   diabetic, diabetes_year, medicine, injection, created_at, updated_at, health_connect)
+VALUES ('11111111', 'KAKAO', 'TEO', 'M', '1997-05-23', 'MEDIUM', 180, 2000, 'ACTIVE', 'ADMIN', 'user/image/teo', false, 0, false, false, '2024-07-21 10:18:27',
+        '2024-07-21 10:18:27', 'NEVER_CONNECTED');
 
 INSERT INTO users (oauth_id, oauth_provider, nickname, gender, birthday, activity_amount, height, recommended_calorie, status, role, profile_image_path,
-                   diabetic, diabetes_year, medicine, injection, created_at, updated_at, accessed_at, health_connect)
-VALUES ('22222222', 'NAVER', 'EVE', 'F', '2001-12-24', 'LOW', 160, 1500, 'ACTIVE', 'USER', 'user/image/eve', true, 3, true, true, now(), now(), now(),
+                   diabetic, diabetes_year, medicine, injection, created_at, updated_at, health_connect)
+VALUES ('22222222', 'NAVER', 'EVE', 'F', '2001-12-24', 'LOW', 160, 1500, 'ACTIVE', 'USER', 'user/image/eve', true, 3, true, true, '2024-07-21 10:18:27',
+        '2024-07-21 10:18:27',
         'NEVER_CONNECTED');
 INSERT INTO users (oauth_id, oauth_provider, nickname, gender, birthday, activity_amount, height, recommended_calorie, status, role, profile_image_path,
-                   diabetic, diabetes_year, medicine, injection, created_at, updated_at, accessed_at, health_connect)
-VALUES ('33333333', 'NAVER', 'user3', 'F', '2001-12-24', 'LOW', 160, 1500, 'ACTIVE', 'USER', 'user/image/eve', true, 3, true, true, now(), now(), now(),
+                   diabetic, diabetes_year, medicine, injection, created_at, updated_at, health_connect)
+VALUES ('33333333', 'NAVER', 'user3', 'F', '2001-12-24', 'LOW', 160, 1500, 'ACTIVE', 'USER', 'user/image/eve', true, 3, true, true, '2024-07-21 10:18:27',
+        '2024-07-21 10:18:27',
         'NEVER_CONNECTED');
 INSERT INTO users (oauth_id, oauth_provider, nickname, gender, birthday, activity_amount, height, recommended_calorie, status, role, profile_image_path,
-                   diabetic, diabetes_year, medicine, injection, created_at, updated_at, accessed_at, health_connect)
-VALUES ('44444444', 'NAVER', 'user4', 'F', '2001-12-24', 'LOW', 160, 1500, 'ACTIVE', 'USER', 'user/image/eve', true, 3, true, true, now(), now(), now(),
+                   diabetic, diabetes_year, medicine, injection, created_at, updated_at, health_connect)
+VALUES ('44444444', 'NAVER', 'user4', 'F', '2001-12-24', 'LOW', 160, 1500, 'ACTIVE', 'USER', 'user/image/eve', true, 3, true, true, '2024-07-21 10:18:27',
+        '2024-07-21 10:18:27',
         'NEVER_CONNECTED');
 
 INSERT INTO point_product (product_name, point, type, description)

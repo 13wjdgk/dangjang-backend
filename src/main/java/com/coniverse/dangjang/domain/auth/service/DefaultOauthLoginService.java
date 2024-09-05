@@ -1,6 +1,5 @@
 package com.coniverse.dangjang.domain.auth.service;
 
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +25,7 @@ import com.coniverse.dangjang.domain.infrastructure.auth.client.OAuthClient;
 import com.coniverse.dangjang.domain.infrastructure.auth.dto.OAuthInfoResponse;
 import com.coniverse.dangjang.domain.notification.service.NotificationService;
 import com.coniverse.dangjang.domain.user.entity.User;
+import com.coniverse.dangjang.domain.user.entity.UserAccess;
 import com.coniverse.dangjang.domain.user.exception.InvalidAuthenticationException;
 import com.coniverse.dangjang.domain.user.exception.NonExistentUserException;
 import com.coniverse.dangjang.domain.user.repository.UserRepository;
@@ -176,8 +176,8 @@ public class DefaultOauthLoginService implements OauthLoginService {
 	 * @since 1.0.0
 	 */
 	public void updateUserAccessedAt(User user) {
-		user.updateAccessedAt(LocalDate.now());
-		userRepository.save(user);
+		UserAccess userAccess = userSearchService.findUserAccessByOauthId(user.getOauthId());
+		// TODO: userAccess가 없을 경우 예외처리
 	}
 
 	/**

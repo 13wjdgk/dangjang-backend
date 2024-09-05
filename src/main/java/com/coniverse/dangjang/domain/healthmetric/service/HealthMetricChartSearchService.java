@@ -46,33 +46,30 @@ public class HealthMetricChartSearchService {
 	 */
 
 	public HealthMetricChartResponse findHealthMetricChart(String oauthId, LocalDate startDate, LocalDate endDate) {
-		List<BloodSugarMinMax> bloodSugarMinMaxes = findBloodSugarMinMaxes(oauthId, startDate, endDate);
-		List<HealthMetricChartData> weights = findWeights(oauthId, startDate, endDate);
-		List<HealthMetricChartData> stepCounts = findStepCounts(oauthId, startDate, endDate);
+		List<HealthMetric> healthMetrics = healthMetricSearchService.findAllHealthMetricByDate(oauthId, startDate, endDate);
+		List<BloodSugarMinMax> bloodSugarMinMaxes = findBloodSugarMinMaxes(healthMetrics);
+		List<HealthMetricChartData> weights = findWeights(healthMetrics);
+		List<HealthMetricChartData> stepCounts = findStepCounts(healthMetrics);
 		List<HealthMetricChartData> exerciseCalories = findExerciseCalories(oauthId, startDate, endDate);
-
 		return new HealthMetricChartResponse(startDate, endDate, bloodSugarMinMaxes, weights, stepCounts, exerciseCalories);
 	}
 
 	/**
-	 * 기한 내의 혈당 최저,최고 값을 조회한다.
+	 * 일정 기간 내의 혈당 최저,최고 값을 조회한다.
 	 *
-	 * @param startDate 조회 시작 날짜
-	 * @param endDate   조회 종료 날짜
-	 * @param oauthId   유저 아이디
+	 * @param healthMetrics 일정 기간 내, 유저의 모든 건강지표
 	 * @return List<BloodSugarMinMax> 혈당 최저,최고 값 리스트
 	 * @since 1.0.0
 	 */
 
-	private List<BloodSugarMinMax> findBloodSugarMinMaxes(String oauthId, LocalDate startDate, LocalDate endDate) {
+	private List<BloodSugarMinMax> findBloodSugarMinMaxes(List<HealthMetric> healthMetrics) {
 		List<BloodSugarMinMax> bloodSugarMinMaxes = new ArrayList<>();
-		List<HealthMetric> bloodSugarHealthMetric = healthMetricSearchService.findWeeklyHealthMetricByGroupCode(oauthId, GroupCode.BLOOD_SUGAR,
-			startDate, endDate);
-		Map<LocalDate, List<HealthMetric>> bloodSugarMapByDate = bloodSugarHealthMetric.stream().collect(Collectors.groupingBy(HealthMetric::getCreatedAt));
-		bloodSugarMapByDate.forEach((date, healthMetrics) -> {
-			int minBloodSugar = healthMetrics.stream().mapToInt(healthMetric -> Integer.parseInt(healthMetric.getUnit())).min().orElseThrow(
+		healthMetrics = healthMetrics.stream().filter(healthMetric -> GroupCode.BLOOD_SUGAR.equals(healthMetric.getGroupCode())).toList();
+		Map<LocalDate, List<HealthMetric>> bloodSugarMapByDate = healthMetrics.stream().collect(Collectors.groupingBy(HealthMetric::getCreatedAt));
+		bloodSugarMapByDate.forEach((date, dailyHealthMetrics) -> {
+			int minBloodSugar = dailyHealthMetrics.stream().mapToInt(healthMetric -> Integer.parseInt(healthMetric.getUnit())).min().orElseThrow(
 				HealthMetricNotFoundException::new);
-			int maxBloodSugar = healthMetrics.stream().mapToInt(healthMetric -> Integer.parseInt(healthMetric.getUnit())).max().orElseThrow(
+			int maxBloodSugar = dailyHealthMetrics.stream().mapToInt(healthMetric -> Integer.parseInt(healthMetric.getUnit())).max().orElseThrow(
 				HealthMetricNotFoundException::new);
 			bloodSugarMinMaxes.add(new BloodSugarMinMax(date, minBloodSugar, maxBloodSugar));
 
@@ -81,39 +78,33 @@ public class HealthMetricChartSearchService {
 	}
 
 	/**
-	 * 기한 내의 체중 값을 조회한다.
+	 * 일정 기간 내의 체중 값을 조회한다.
 	 *
-	 * @param startDate 조회 시작 날짜
-	 * @param endDate   조회 종료 날짜
-	 * @param oauthId   유저 아이디
+	 * @param healthMetrics 일정 기간 내, 유저의 모든 건강지표
 	 * @return List<HealthMetricChartData> 체중 값 리스트
 	 * @since 1.0.0
 	 */
-	private List<HealthMetricChartData> findWeights(String oauthId, LocalDate startDate, LocalDate endDate) {
+	private List<HealthMetricChartData> findWeights(List<HealthMetric> healthMetrics) {
 		List<HealthMetricChartData> weights = new ArrayList<>();
-		List<HealthMetric> healthMetrics = healthMetricSearchService.findWeeklyHealthMetricByGroupCode(oauthId, GroupCode.WEIGHT, startDate, endDate);
-		healthMetrics.forEach(healthMetric ->
-			weights.add(new HealthMetricChartData(healthMetric.getCreatedAt(), Integer.parseInt(healthMetric.getUnit())))
-		);
+		healthMetrics.stream().filter(healthMetric -> CommonCode.MEASUREMENT.equals(healthMetric.getType()))
+			.forEach(healthMetric -> weights.add(new HealthMetricChartData(healthMetric.getCreatedAt(), Integer.parseInt(healthMetric.getUnit()))));
+
 		return weights;
 	}
 
 	/**
-	 * 기한 내의 걸음수를 조회한다.
+	 * 일정 기간 내의 걸음수를 조회한다.
 	 *
-	 * @param startDate 조회 시작 날짜
-	 * @param endDate   조회 종료 날짜
-	 * @param oauthId   유저 아이디
+	 * @param healthMetrics 일정 기간 내, 유저의 모든 건강지표
 	 * @return List<HealthMetricChartData> 걸음수 리스트
 	 * @since 1.0.0
 	 */
-	private List<HealthMetricChartData> findStepCounts(String oauthId, LocalDate startDate, LocalDate endDate) {
+	private List<HealthMetricChartData> findStepCounts(List<HealthMetric> healthMetrics) {
 		List<HealthMetricChartData> stepCounts = new ArrayList<>();
-
-		List<HealthMetric> healthMetrics = healthMetricSearchService.findWeeklyHealthMetricById(oauthId, CommonCode.STEP_COUNT, startDate, endDate);
-		healthMetrics.forEach(healthMetric ->
-			stepCounts.add(new HealthMetricChartData(healthMetric.getCreatedAt(), Integer.parseInt(healthMetric.getUnit())))
-		);
+		healthMetrics.stream().filter(healthMetric -> CommonCode.STEP_COUNT.equals(healthMetric.getType()))
+			.forEach(healthMetric ->
+				stepCounts.add(new HealthMetricChartData(healthMetric.getCreatedAt(), Integer.parseInt(healthMetric.getUnit())))
+			);
 		return stepCounts;
 	}
 

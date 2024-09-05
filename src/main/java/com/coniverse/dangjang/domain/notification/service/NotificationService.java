@@ -1,7 +1,6 @@
 package com.coniverse.dangjang.domain.notification.service;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -160,7 +159,9 @@ public class NotificationService {
 	public List<Notification> generateNotifications(List<UserFcmToken> userFcmTokens, LocalDate date, NotificationType type) {
 		return userFcmTokens.stream()
 			.map(fcmToken -> {
-				int compareDate = (int)ChronoUnit.DAYS.between(fcmToken.getUser().getAccessedAt(), date);
+				//int compareDate = (int)ChronoUnit.DAYS.between(fcmToken.getUser().getAccessedAt(), date);
+				// TODO : compareDate 수정 필요
+				int compareDate = 0;
 				return notificationMapper.toEntity(fcmToken.getUser(), FCMContent.TITLE.getTitle(compareDate), FCMContent.BODY.getBody(compareDate), date,
 					type);
 			})
@@ -177,7 +178,9 @@ public class NotificationService {
 	public List<FcmMessage> generateFcmMessage(List<UserFcmToken> userFcmTokens, LocalDate date) {
 		return userFcmTokens.stream()
 			.map(userFcmToken -> {
-				int compareDate = (int)ChronoUnit.DAYS.between(userFcmToken.getUser().getAccessedAt(), date);
+				// int compareDate = (int)ChronoUnit.DAYS.between(userFcmToken.getUser().getAccessedAt(), date);
+				// TODO : compareDate 수정 필요
+				int compareDate = 0;
 				return new FcmMessage(userFcmToken.getFcmToken(), FCMContent.TITLE.getTitle(compareDate), FCMContent.BODY.getBody(compareDate));
 			})
 			.collect(Collectors.toList());

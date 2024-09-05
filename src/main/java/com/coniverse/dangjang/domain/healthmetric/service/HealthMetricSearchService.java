@@ -103,4 +103,16 @@ public class HealthMetricSearchService {
 	public int findByGroupCode(String oauthId, GroupCode groupCode, LocalDate createdAt) {
 		return healthMetricRepository.findHealthMetricCountByGroupCode(oauthId, groupCode, createdAt);
 	}
+
+	/**
+	 * 일정 기간 내 유저의 모든 건강 지표를 조회한다.
+	 *
+	 * @param oauthId 유저 PK
+	 * @return HealthMetric 건강 지표
+	 * @since 1.0.0
+	 */
+	public List<HealthMetric> findAllHealthMetricByDate(String oauthId, LocalDate startDate, LocalDate endDate) {
+		return healthMetricRepository.findAllHealthMetricByDate(oauthId, startDate, endDate);
+	}
+
 }

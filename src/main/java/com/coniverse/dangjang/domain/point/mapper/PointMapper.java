@@ -7,7 +7,6 @@ import com.coniverse.dangjang.domain.point.dto.request.UsePointRequest;
 import com.coniverse.dangjang.domain.point.entity.PointHistory;
 import com.coniverse.dangjang.domain.point.entity.PointProduct;
 import com.coniverse.dangjang.domain.point.entity.PurchaseHistory;
-import com.coniverse.dangjang.domain.point.entity.UserPoint;
 import com.coniverse.dangjang.domain.user.entity.User;
 
 /**
@@ -25,14 +24,7 @@ public interface PointMapper {
 	 */
 
 	@Mapping(target = "changePoint", source = "changePoint")
-	PointHistory toEntity(PointProduct pointProduct, User user, int changePoint, int balancePoint);
-
-	/**
-	 * UserPoint Entity 변환
-	 *
-	 * @since 1.0.0
-	 */
-	UserPoint toEntity(String oauthId, int point);
+	PointHistory toEntity(PointProduct pointProduct, User user, int changePoint);
 
 	/**
 	 * ProductPurchase Entity 변환
